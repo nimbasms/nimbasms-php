@@ -1,0 +1,8 @@
+{
+  "name": "nimbasms/nimbasms",
+  "description": "A PHP module for communicating with Nimba SMS API.",
+  "type": "library",
+  "require": {
+    "guzzlehttp/guzzle": "^7.0"
+  }
+}
