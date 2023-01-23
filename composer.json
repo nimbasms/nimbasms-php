@@ -1,8 +1,30 @@
 {
   "name": "nimbasms/nimbasms",
-  "description": "A PHP module for communicating with Nimba SMS API.",
+  "description": "PHP library wrapper of the Nimba SMS API.",
   "type": "library",
+  "keywords": [
+        "php", "curl", "api", "sms", "client", "http client", "json", "requests", "rest", 
+        "restful", "web service", "nimba", "nimba sms"
+    ],
+  "homepage": "https://github.com/nimbasms/nimbasms-php",
+  "license": "MIT",
+  "authors": [
+        {
+            "name": "Nimba SMS",
+            "email": "technical@nimbasms.com"
+        }
+    ],
   "require": {
-    "guzzlehttp/guzzle": "^7.0"
-  }
+        "php": "^7.2.5 || ^8.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "Nimbasms\\": "src/"
+        }
+    },
+    "config": {
+
+        "platform-check": false
+    }
 }
