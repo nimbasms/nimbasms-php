@@ -3,6 +3,7 @@
 namespace Nimbasms;
 
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Psr7\Request;
 
 class Nimbasms {
 
@@ -41,20 +42,24 @@ class Nimbasms {
 
    private $headers = '';
 
-   private $args = '';
+   private $auth = '';
 
 
    public function __construct($serviceId,$serviceToken)
    {
-      $this->serviceId = $serviceId;
+        $this->serviceId = $serviceId;
 
-      $this->serviceToken = $serviceToken;
+        $this->serviceToken = $serviceToken;
 
-      $this->credentials = $this->getServiceId() . ':' . $this->getServiceToken();
+        $this->credentials = $this->getServiceId() . ':' . $this->getServiceToken();
 
-      $this->headers = array('Authorization: Basic ' . base64_encode($this->credentials));
+        $this->headers =  [   
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Basic '.base64_encode($this->credentials)
+        ];
 
-      $this->args = array('auth' => [$this->getServiceId(),$this->getServiceToken()]);
+        $this->auth = ['auth' => [$this->getServiceId(),$this->getServiceToken()]];
    }
 
    # Get your account balance
@@ -65,48 +70,62 @@ class Nimbasms {
 
         $client = new GuzzleClient;
 
-        $request = $client->get($url, $this->args, ['headers' => $this->headers]);
+        $request = $client->get($url, ['headers' => $this->headers]);
 
-        $result = $request->getBody();
-        
-        $response = json_decode($result, true);
+        $response = json_decode($request->getBody()->getContents());
 
        	return $response;
    }
 
    # Get groups
    
-   public function getAccountGroup()
+   public function getAccountGroup($limit = null, $offset = null)
    {
-        
+        $url = self::BASE_URL. '/v1/groups';
+
+        $client = new GuzzleClient;
+
+        $request = $client->get($url, $this->auth,
+                                ['query' => ['limit' => $limit, 'offset' => $offset]],
+                                ['headers' => $this->headers]);
+
+        $response = json_decode($request->getBody()->getContents());
+
+        return $response;
    }
 
 
    # Get Sendernames
    
-   public function getAccountSendernames()
+   public function getAccountSendernames($limit = null, $offset = null)
    {
+        $url = self::BASE_URL. '/v1/sendernames';
 
+        $client = new GuzzleClient;
+
+        $request = $client->get($url, $this->auth,
+                                ['query' => ['limit' => $limit, 'offset' => $offset]],
+                                ['headers' => $this->headers]);
+
+        $response = json_decode($request->getBody()->getContents());
+
+        return $response;
    }
 
 
    # Get Contact
    
-   public function getContactList($limit,$offset)
+   public function getContactList($limit = null, $offset = null)
    {
         $url = self::BASE_URL. '/v1/contacts';
 
-        $this->args = array('auth' => [$this->getServiceId(),$this->getServiceToken()], 
-                            'limit' => $limit, 
-                            'offset' => $offset);
-
         $client = new GuzzleClient;
 
-        $request = $client->get($url, $this->args, ['headers' => $this->headers]);
+        $request = $client->get($url, $this->auth,
+                                ['query' => ['limit' => $limit, 'offset' => $offset]],
+                                ['headers' => $this->headers]);
 
-        $result = $request->getBody();
-        
-        $response = json_decode($result, true);
+        $response = json_decode($request->getBody()->getContents());
 
         return $response;
    }
@@ -114,9 +133,20 @@ class Nimbasms {
    # Create Contact
    # This contact will be added to the default contact list
    
-   public function addContactToList()
+   public function addContactToList($numero, $name ='', $groups=[])
    {
 
+        $url = self::BASE_URL. '/v1/contacts';
+
+        $client = new GuzzleClient;
+
+        $params = ['numero' => $numero, 'name' => $name, 'groups' => $groups];
+
+        $request = $client->post($url, [ 'headers' => $this->headers, 'json' => $params]);
+            
+        $response = json_decode($request->getBody()->getContents());
+
+        return $response;
    }
 
 
@@ -129,9 +159,26 @@ class Nimbasms {
 
    # Get All messages
    
-   public function getAllAccountMessages()
+   public function getAllAccountMessages($sent_at = null, $sent_at_gte = null, $sent_at__lte = null,
+    $limit = null, $offset = null)
    {
+        $url = self::BASE_URL. '/v1/messages';
 
+        $client = new GuzzleClient;
+
+        $query = [
+                    'sent_at' => $sent_at, 
+                    'sent_at_gte' => $sent_at_gte, 
+                    'sent_at__lte' => $sent_at__lte,
+                    'limit' => $limit,
+                    'offset' => $offset
+                ];
+
+        $request = $client->get($url, $this->auth, ['query' => $query], ['headers' => $this->headers]);
+            
+        $response = json_decode($request->getBody()->getContents());
+
+        return $response;
    }
 
    # Get only last 10 messages
@@ -141,11 +188,37 @@ class Nimbasms {
 
    }
 
-   # send message...
+   /**
+    * Sends SMS.
+    *
+    * @param  string  $senderName    Message Sender Name (Max Length of 11). Case sensitive
+    *                                   
+    * @param  array  $to  Mobile Number to which to send message to 
+    *                     (Should not include a '+' sign or '00')
+    * 
+    * @param  string  $message          The message to send (Can be used for 'long' messages, that is, 
+    *                                   messages longer than 140 characters per message)         
+    *
+    * @return array
+    */
    
-   public function sendMessage()
-   {
+   public function sendMessage($senderName, $receiverAddress, $message)
+   {    
+        // API Call URI for sending message 
+        
+        $url = self::BASE_URL. '/v1/messages';
 
+        // Requested Parameters
+        
+        $params = ['sender_name' => $senderName, 'to' => [$receiverAddress], 'message' => $message];
+
+        $client = new GuzzleClient;
+
+        $request = $client->request('POST', $url, [ 'headers' => $this->headers, 'json' => $params]);
+    
+        $response = json_decode($request->getBody()->getContents());
+
+        return $response;
    }
 
 

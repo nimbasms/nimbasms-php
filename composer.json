@@ -21,7 +21,8 @@
     "autoload": {
         "psr-4": {
           "Nimbasms\\": "src/"
-        }
+        },
+        "files": ["src/config.php"]
     },
     "config": {
 
