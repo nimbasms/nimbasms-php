@@ -1,4 +1,4 @@
-# nimbasms-python
+# nimbasms-php
 A PHP library to interact with Nimba SMS API.
 
 # Usage
