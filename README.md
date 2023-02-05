@@ -9,8 +9,6 @@ A PHP library to interact with Nimba SMS API.
  - [Sendernames](#sendername)
  - [Create Contacts](#contact)
  - [Send Message](#message)
- - [Logs Activities](#log)
-
 
 ## <a name="installation"></a> Installation
 
@@ -114,9 +112,11 @@ $sms->addContact('XXXXXX',$options);
 
 ```php
 
-# send message...
+# Send message...
 
-$sms->from('SENDER_NAME')->to(['CONTACT_NUMBER'])->message('MESSAGE_TO_SEND')->send();
+$contacts = ['XXXXXXXX'];
+
+$sms->from('SENDER_NAME')->to($contacts)->message('MESSAGE_TO_SEND')->send();
 
 # Get All messages
 
@@ -141,22 +141,6 @@ $sms->getMessages($options);
 
 # Retrieve message
 
-```
-
-## <a name="log"></a> Logs Activities
-
-```php
-import logging
-from nimbasms import Client
-
-ACCOUNT_SID = 'XXXX'
-AUTH_TOKEN = 'XXXX'
-client = Client(ACCOUNT_SID, AUTH_TOKEN)
-logging.basicConfig() # log in console
-logging.basicConfig(filename='./log.txt') # or loging in file
-client.http_client.logger.setLevel(logging.INFO)
-
-# ....
 ```
 
 ## Credit
