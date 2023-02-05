@@ -2,20 +2,31 @@
 
 require_once 'vendor/autoload.php';
 
-use \Nimbasms\Nimbasms;
+use \NimbaSMS\NimbaSMS;
 
-$sms = new Nimbasms();
+$config = [
+	'serviceId' => 'ba270d0c088652ac7ba3b58fa6ee8c8b',
+	'secretToken' => 'LP-3lv5Q-GV4zp6YK31n-DUhYQ0FO5CCThZ5r2NmX37HnY3TUqxIhoa10innIJ4Aws0aW86Erd6ovMsYxQVEQPaNcnHwQBcU3xLsCFleqFw'
+];
 
-// var_dump($sms->getAccountBalance());
+// or 
+// $config = [
+// 	'token' => 'Basic_Auth_Token'
+// ];
 
-// var_dump($sms->getAccountGroup());
+$sms = new NimbaSMS($config);
 
-// var_dump($sms->getAccountSendernames());
+// var_dump($sms->getBalance());
 
-var_dump($sms->getAllAccountMessages(null,null,null,1,null));
+// var_dump($sms->getGroups($options));
 
-// var_dump($sms->getContactList());
+// var_dump($sms->getSendername());
 
-// var_dump($sms->sendMessage('Nimba API','623273737','Just testing'));
+// var_dump($sms->getMessages($options));
+
+// var_dump($sms->getContacts());
+
+var_dump($sms->from('Nimba API')->to('625291901')->message('Just testing')->send());
 
 // var_dump($sms->addContactToList('626464671','Aly Kaba'));
+

@@ -20,9 +20,8 @@
     },
     "autoload": {
         "psr-4": {
-          "Nimbasms\\": "src/"
-        },
-        "files": ["src/config.php"]
+          "NimbaSMS\\": "src/"
+        }
     },
     "config": {
 

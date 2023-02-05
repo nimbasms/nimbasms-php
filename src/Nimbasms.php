@@ -1,11 +1,11 @@
 <?php
 
-namespace Nimbasms;
+namespace NimbaSMS;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Psr7\Request;
 
-class Nimbasms {
+class NimbaSMS {
 
    protected const BASE_URL = 'https://api.nimbasms.com';
 
@@ -24,7 +24,22 @@ class Nimbasms {
     * @var string
     */
    
-   protected $serviceToken = '';
+   protected $secretToken = '';
+
+   /**
+    * @var string
+    */
+   protected $to;
+
+   /**
+    * @var string
+    */
+   protected $from;
+
+   /**
+    * @var string
+    */
+   protected $message;
 
    /**
     * Creates a new Nimbasms instance. If the user doesn't know his token or doesn't have a
@@ -38,33 +53,44 @@ class Nimbasms {
     * @return void
     */
    
-   private $credentials = '';
+   private $credentials = null;
 
-   private $headers = '';
+   private $headers = null;
 
-   private $auth = '';
-
-
-   public function __construct($serviceId,$serviceToken)
+   public function __construct($config = [])
    {
-        $this->serviceId = $serviceId;
+        if (array_key_exists('serviceId', $config) && array_key_exists('secretToken', $config)) {
+            
+            $this->serviceId = $config['serviceId'];
 
-        $this->serviceToken = $serviceToken;
+            $this->secretToken = $config['secretToken'];
 
-        $this->credentials = $this->getServiceId() . ':' . $this->getServiceToken();
+            $this->credentials = $this->getServiceId() . ':' . $this->getSecretToken();
 
-        $this->headers =  [   
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Basic '.base64_encode($this->credentials)
-        ];
+            $this->headers =  [   
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Basic '.base64_encode($this->credentials)
+            ];
+        }
 
-        $this->auth = ['auth' => [$this->getServiceId(),$this->getServiceToken()]];
+        if (array_key_exists('token', $config)) {
+
+            $this->token = $config['token'];
+
+            $this->headers =  [   
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'Authorization' => $this->token
+            ];
+
+        }
+
    }
 
    # Get your account balance
    
-   public function getAccountBalance()
+   public function getBalance()
    {
        	$url = self::BASE_URL. '/v1/accounts';
 
@@ -79,15 +105,13 @@ class Nimbasms {
 
    # Get groups
    
-   public function getAccountGroup($limit = null, $offset = null)
+   public function getGroups($options = [])
    {
         $url = self::BASE_URL. '/v1/groups';
 
         $client = new GuzzleClient;
 
-        $request = $client->get($url, $this->auth,
-                                ['query' => ['limit' => $limit, 'offset' => $offset]],
-                                ['headers' => $this->headers]);
+        $request = $client->get($url,['headers' => $this->headers,'query' => $options]);
 
         $response = json_decode($request->getBody()->getContents());
 
@@ -97,15 +121,13 @@ class Nimbasms {
 
    # Get Sendernames
    
-   public function getAccountSendernames($limit = null, $offset = null)
+   public function getSendername($options = [])
    {
         $url = self::BASE_URL. '/v1/sendernames';
 
         $client = new GuzzleClient;
 
-        $request = $client->get($url, $this->auth,
-                                ['query' => ['limit' => $limit, 'offset' => $offset]],
-                                ['headers' => $this->headers]);
+        $request = $client->get($url,['headers' => $this->headers,'query' => $options]);
 
         $response = json_decode($request->getBody()->getContents());
 
@@ -115,15 +137,13 @@ class Nimbasms {
 
    # Get Contact
    
-   public function getContactList($limit = null, $offset = null)
+   public function getContacts($options = [])
    {
         $url = self::BASE_URL. '/v1/contacts';
 
         $client = new GuzzleClient;
 
-        $request = $client->get($url, $this->auth,
-                                ['query' => ['limit' => $limit, 'offset' => $offset]],
-                                ['headers' => $this->headers]);
+        $request = $client->get($url,['headers' => $this->headers,'query' => $options]);
 
         $response = json_decode($request->getBody()->getContents());
 
@@ -133,7 +153,7 @@ class Nimbasms {
    # Create Contact
    # This contact will be added to the default contact list
    
-   public function addContactToList($numero, $name ='', $groups=[])
+   public function addContact($numero, $name = null, $groups=[])
    {
 
         $url = self::BASE_URL. '/v1/contacts';
@@ -142,7 +162,7 @@ class Nimbasms {
 
         $params = ['numero' => $numero, 'name' => $name, 'groups' => $groups];
 
-        $request = $client->post($url, [ 'headers' => $this->headers, 'json' => $params]);
+        $request = $client->post($url,['headers' => $this->headers, 'json' => $params]);
             
         $response = json_decode($request->getBody()->getContents());
 
@@ -150,42 +170,20 @@ class Nimbasms {
    }
 
 
-   # Create with groups and name - name and groups are optional.
-   
-   public function createContactGroup()
-   {
-
-   }
 
    # Get All messages
    
-   public function getAllAccountMessages($sent_at = null, $sent_at_gte = null, $sent_at__lte = null,
-    $limit = null, $offset = null)
+   public function getMessages($options = [])
    {
         $url = self::BASE_URL. '/v1/messages';
 
         $client = new GuzzleClient;
 
-        $query = [
-                    'sent_at' => $sent_at, 
-                    'sent_at_gte' => $sent_at_gte, 
-                    'sent_at__lte' => $sent_at__lte,
-                    'limit' => $limit,
-                    'offset' => $offset
-                ];
-
-        $request = $client->get($url, $this->auth, ['query' => $query], ['headers' => $this->headers]);
+        $request = $client->get($url,['headers' => $this->headers,'query' => $options]);
             
         $response = json_decode($request->getBody()->getContents());
 
         return $response;
-   }
-
-   # Get only last 10 messages
-   
-   public function getLastTenAccountMessage()
-   {
-
    }
 
    /**
@@ -202,7 +200,29 @@ class Nimbasms {
     * @return array
     */
    
-   public function sendMessage($senderName, $receiverAddress, $message)
+   public function from($from){
+
+        $this->from = $from;
+        
+        return $this;
+        
+   }
+   
+   public function to($to){
+
+        $this->to = $to;
+
+        return $this;
+   }
+
+   public function message($message){
+
+        $this->message = $message;
+
+        return $this;
+   }
+   
+   public function send()
    {    
         // API Call URI for sending message 
         
@@ -210,11 +230,15 @@ class Nimbasms {
 
         // Requested Parameters
         
-        $params = ['sender_name' => $senderName, 'to' => [$receiverAddress], 'message' => $message];
+        $params = [
+            'sender_name' => $this->from, 
+            'to' => [$this->to], 
+            'message' => $this->message
+        ];
 
         $client = new GuzzleClient;
 
-        $request = $client->request('POST', $url, [ 'headers' => $this->headers, 'json' => $params]);
+        $request = $client->post($url, ['headers' => $this->headers, 'json' => $params]);
     
         $response = json_decode($request->getBody()->getContents());
 
@@ -255,19 +279,19 @@ class Nimbasms {
     *
     * @return string
     */
-   public function getServiceToken()
+   public function getSecretToken()
    {
-       return $this->serviceToken;
+       return $this->secretToken;
    }
 
    /**
     *  Sets the Client Service Token.
     *
-    * @param  string  $serviceToken the Service Token
+    * @param  string  $secretToken the Service Token
     */
-   public function setServiceToken($serviceToken)
+   public function setSecretToken($secretToken)
    {
-       $this->serviceToken = $serviceToken;
+       $this->secretToken = $secretToken;
    }
 }
 
