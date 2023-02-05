@@ -25,9 +25,7 @@ First you need to resolve a `NimbaSMS` instance:
 ```php
 use NimbaSMS\NimbaSMS;
 
-/**
-* Use <service_id> and <service_secret>
-* */
+// Use <service_id> and <service_secret>
 
 $config = [
 	'serviceId' => 'XXXXXXXXXXXXXXXXXXXXXXXX',
@@ -36,9 +34,7 @@ $config = [
 
 // OR
 
-/**
-* Use a valid access token
-* */
+// Use a valid access token
 
 $config = [
     'token' => 'Basic XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
@@ -51,70 +47,59 @@ $sms = new SMS($config);
 
 ## <a name="account"></a> Check balance
 ```php
-use 
 $sms->getBalance()
 ```
-
 
 ## <a name="group"></a> Groups
 
 ```php
-use
 $sms->getGroups();
 
 // With options limit or offset
+
 $options = [
-	'limit' = 2,
-	'offset' = 2
+	'limit' = integer,
+	'offset' = integer
 ];
 
-$sms->getGroups();
+$sms->getGroups($options);
 ```
-
-
 
 ## <a name="sendername"></a> Sendernames
 
 ```php
-from nimbasms import Client
-
-ACCOUNT_SID = 'XXXX'
-AUTH_TOKEN = 'XXXX'
-client = Client(ACCOUNT_SID, AUTH_TOKEN)
-
-response = client.sendernames.list()
-if response.ok:
-    all_sendernames = response.data
-    for item in all_sendernames:
-        print(item)
+$sms->getSendername()
 ```
-
 
 ## <a name="contact"></a> Create Contact
 
 ```php
-from nimbasms import Client
+$sms->addContact('XXXXXXX')
 
-ACCOUNT_SID = 'XXXX'
-AUTH_TOKEN = 'XXXX'
-client = Client(ACCOUNT_SID, AUTH_TOKEN)
+// Create with name
 
-response = client.contacts.list()
-if response.ok:
-    all_contacts = response.data
-    for item in all_contacts:
-        print(item)
+$options = [
+	'name' => 'Full Name', 
+];
 
-# This contact will be added to the default contact list
-response = client.contacts.create(numero='224XXXXXXXXX')
-if response.ok:
-    contact = response.data
+$sms->addContact('620371218',$options)
 
-# Create with groups and name - name and groups are optional.
-response = client.contacts.create(numero='224XXXXXXXXX', 
-    name='Foo', groups=['API', 'Facebook Client'])
-if response.ok:
-    contact = response.data
+// Create and assignate to group or groups
+
+$options = [
+	'groups' => ['Group 1','Group 2'], 
+];
+
+$sms->addContact('620371218',$options)
+
+# Create with name and assignate to group or groups
+
+$options = [
+	'name' => 'Full Name',
+	'groups' => ['Group 1','Group 2'], 
+];
+
+$sms->addContact('620371218',$options)
 
 ```
 
