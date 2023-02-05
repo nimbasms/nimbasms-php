@@ -139,7 +139,34 @@ $options = [
 
 $sms->getMessages($options);
 
+# Get messages on specific date
+
+$options = [
+	'sent_at' => 'XXXX-XX-XX'
+];
+
+$sms->getMessages($options);
+
+# Get messages messages with a date greater than specific date
+
+$options = [
+	'sent_at__gte' => 'XXXX-XX-XX'
+];
+
+$sms->getMessages($options);
+
+# Get messages messages with a date lower than specific date
+
+$options = [
+	'sent_at__lte' => 'XXXX-XX-XX'
+];
+
+$sms->getMessages($options);
+
+
 # Retrieve message
+
+$sms->retrieveMessage('XXXXX-XXX-XXXX-XXXX-XXXXXXXX');
 
 ```
 
