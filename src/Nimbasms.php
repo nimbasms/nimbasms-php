@@ -3,7 +3,6 @@
 namespace NimbaSMS;
 
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Psr7\Request;
 
 class NimbaSMS {
 
@@ -153,14 +152,20 @@ class NimbaSMS {
    # Create Contact
    # This contact will be added to the default contact list
    
-   public function addContact($numero, $name = null, $groups=[])
+   public function addContact($numero, $options = [])
    {
 
         $url = self::BASE_URL. '/v1/contacts';
 
         $client = new GuzzleClient;
 
-        $params = ['numero' => $numero, 'name' => $name, 'groups' => $groups];
+        $params = ['numero' => $numero];
+
+        if(array_key_exists('name',$options))
+            $params['name'] = $options['name'];
+        
+        if(array_key_exists('groups',$options))
+            $params['groups'] = $options['groups'];
 
         $request = $client->post($url,['headers' => $this->headers, 'json' => $params]);
             
@@ -208,7 +213,7 @@ class NimbaSMS {
         
    }
    
-   public function to($to){
+   public function to(Array $to){
 
         $this->to = $to;
 
@@ -232,7 +237,7 @@ class NimbaSMS {
         
         $params = [
             'sender_name' => $this->from, 
-            'to' => [$this->to], 
+            'to' => $this->to, 
             'message' => $this->message
         ];
 
@@ -248,9 +253,17 @@ class NimbaSMS {
 
    # Retrieve message
    
-   public function retrieveMessage()
+   public function retrieveMessage($messageId)
    {
+        $url = self::BASE_URL. '/v1/messages/'.$messageId;
 
+        $client = new GuzzleClient;
+
+        $request = $client->get($url,['headers' => $this->headers]);
+
+        $response = json_decode($request->getBody()->getContents());
+
+        return $response;
    }
 
    /**

@@ -5,8 +5,8 @@ require_once 'vendor/autoload.php';
 use \NimbaSMS\NimbaSMS;
 
 $config = [
-	'serviceId' => 'XXXXXXXXXXXXXXXXXXXXXXXX',
-	'secretToken' => 'XXXXXXXXXXXXXXXXXXXXXXXX'
+	'serviceId' => 'XXXXXXXXXXXXXXXXXXXXXXXXXX',
+	'secretToken' => 'XXXXXXXXXXXXXXXXXXXXXXXXXX'
 ];
 
 // or 
@@ -26,7 +26,13 @@ $sms = new NimbaSMS($config);
 
 // var_dump($sms->getContacts());
 
-var_dump($sms->from('Nimba API')->to('625291901')->message('Just testing')->send());
+// $contacts = ['XXXXXXXXX'];
 
-// var_dump($sms->addContactToList('626464671','Aly Kaba'));
+// var_dump($sms->from('Nimba API')->to($contacts)->message('Hello World!')->send());
+
+// $options = ['name' => 'XXXX XXXX', 'groups' => ['XXXXX']];
+
+// var_dump($sms->addContact('XXXXXXXX'));
+
+// var_dump($sms->retrieveMessage('XXXXX-XXX-XXXX-XXXX-XXXXXXXX'));
 

@@ -1,6 +1,6 @@
 {
   "name": "nimbasms/nimbasms",
-  "description": "PHP library wrapper of the Nimba SMS API.",
+  "description": "A PHP library to interact with Nimba SMS API.",
   "type": "library",
   "keywords": [
         "php", "curl", "api", "sms", "client", "http client", "json", "requests", "rest", 
