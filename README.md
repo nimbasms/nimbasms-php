@@ -20,7 +20,7 @@ $ composer require nimbasms/nimbasms-php
 ```
 
 ## Usage
-First you need to resolve a `SMSClient` instance:
+First you need to resolve a `NimbaSMS` instance:
 
 ```php
 use NimbaSMS\NimbaSMS;
@@ -28,6 +28,7 @@ use NimbaSMS\NimbaSMS;
 /**
 * Use <service_id> and <service_secret>
 * */
+
 $config = [
 	'serviceId' => 'XXXXXXXXXXXXXXXXXXXXXXXX',
 	'secretToken' => 'XXXXXXXXXXXXXXXXXXXXXXXX'
@@ -38,10 +39,9 @@ $config = [
 /**
 * Use a valid access token
 * */
-$client = SMSClient::getInstance('<your_access_token>');
 
 $config = [
-    'token' => 'Basic_Auth_Token'
+    'token' => 'Basic XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 ];
 ```
 next step, create an `SMS` object passing it the `$config` :
@@ -52,33 +52,23 @@ $sms = new SMS($config);
 ## <a name="account"></a> Check balance
 ```php
 use 
-
-ACCOUNT_SID = 'XXXX'
-AUTH_TOKEN = 'XXXX'
-client = Client(ACCOUNT_SID, AUTH_TOKEN)
-
-# Get your account balance
-response = client.accounts.get()
-if response.ok:
-    my_account = response.data
-    print('My Account balance : {}'.format(my_account['balance']))
-
+$sms->getBalance()
 ```
 
 
 ## <a name="group"></a> Groups
 
 ```php
-from nimbasms import Client
+use
+$sms->getGroups();
 
-ACCOUNT_SID = 'XXXX'
-AUTH_TOKEN = 'XXXX'
-client = Client(ACCOUNT_SID, AUTH_TOKEN)
+// With options limit or offset
+$options = [
+	'limit' = 2,
+	'offset' = 2
+];
 
-response = client.groups.list()
-if response.ok:
-    all_groups = response.data
-    print('There are {} groupes'.format(len(all_messages)))
+$sms->getGroups();
 ```
 
 
