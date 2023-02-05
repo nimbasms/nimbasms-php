@@ -25,16 +25,16 @@ First you need to resolve a `NimbaSMS` instance:
 ```php
 use NimbaSMS\NimbaSMS;
 
-// Use <service_id> and <service_secret>
+# Use <service_id> and <service_secret>
 
 $config = [
 	'serviceId' => 'XXXXXXXXXXXXXXXXXXXXXXXX',
 	'secretToken' => 'XXXXXXXXXXXXXXXXXXXXXXXX'
 ];
 
-// OR
+# OR
 
-// Use a valid access token
+# Use a valid access token
 
 $config = [
     'token' => 'Basic XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
@@ -47,19 +47,23 @@ $sms = new SMS($config);
 
 ## <a name="account"></a> Check balance
 ```php
-$sms->getBalance()
+# Get user account balance
+
+$sms->getBalance();
 ```
 
 ## <a name="group"></a> Groups
 
 ```php
+# Get user account Groups
+
 $sms->getGroups();
 
-// With options limit or offset
+# With options limit or offset. You can use only limit, offset or both
 
 $options = [
-	'limit' = integer,
-	'offset' = integer
+	'limit' = 2,
+	'offset' = 2
 ];
 
 $sms->getGroups($options);
@@ -68,77 +72,77 @@ $sms->getGroups($options);
 ## <a name="sendername"></a> Sendernames
 
 ```php
-$sms->getSendername()
+# Get account Sendernames
+
+$sms->getSendername();
 ```
 
 ## <a name="contact"></a> Create Contact
 
 ```php
-$sms->addContact('XXXXXXX')
 
-// Create with name
+# Add contact
+
+$sms->addContact('XXXXXXX');
+
+# Add contact with Name
 
 $options = [
 	'name' => 'Full Name', 
 ];
 
-$sms->addContact('620371218',$options)
+$sms->addContact('XXXXXXX',$options);
 
-// Create and assignate to group or groups
+# Add contact and assignate to Group or Groups
 
 $options = [
 	'groups' => ['Group 1','Group 2'], 
 ];
 
-$sms->addContact('620371218',$options)
+$sms->addContact('XXXXXXXX',$options);
 
-# Create with name and assignate to group or groups
+# Add contact with Name and assignate to Group or Groups
 
 $options = [
 	'name' => 'Full Name',
 	'groups' => ['Group 1','Group 2'], 
 ];
 
-$sms->addContact('620371218',$options)
+$sms->addContact('XXXXXX',$options);
 
 ```
-
 
 ## <a name="message"></a> Send message
 
 ```php
-from nimbasms import Client
-
-ACCOUNT_SID = 'XXXX'
-AUTH_TOKEN = 'XXXX'
-client = Client(ACCOUNT_SID, AUTH_TOKEN)
-
-# Get All messages
-response = client.messages.list()
-if response.ok:
-    all_messages = response.data
-    print('There are {} messages in your account.'.format(len(all_messages)))
-
-# Get only last 10 messages
-response = client.messages.list(limit=10)
-if response.ok:
-    some_messages = some_messages.data
-    print('Here are the last 10 messages in your account:')
-    for m in some_messages:
-        print(m)
 
 # send message...
-print('Sending a message...')
-response = client.messages.create(to=['XXXX'],
-            sender_name='YYYY', message='Hi Nimba!')
-if response.ok:
-    print('message response : {}'.format(response.data))
 
+$sms->from('SENDER_NAME')->to('CONTACT_NUMBER')->message('MESSAGE_TO_SEND')->send();
+
+# Get All messages
+
+$sms->getMessages();
+
+# Get only last 10 messages
+
+$options = [
+	'limit' => 10
+];
+
+$sms->getMessages($options);
+
+# Get only last 10 messages with offset 2
+
+$options = [
+	'limit' => 10,
+	'offset' => 2
+];
+
+$sms->getMessages($options);
 
 # Retrieve message
-response = client.messages.retrieve(messageid='XXXXXXXXXXXXXXXXXXXXX')
-if response.ok:
-    print("Message retrieve : {}".format(response.data))
+
 ```
 
 ## <a name="log"></a> Logs Activities
