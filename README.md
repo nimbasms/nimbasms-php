@@ -32,9 +32,7 @@ $config = [
 	'secretToken' => 'XXXXXXXXXXXXXXXXXXXXXXXX'
 ];
 
-# OR
-
-# Use a valid access token
+# OR use a valid access token
 
 $config = [
     'token' => 'Basic XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
@@ -118,7 +116,7 @@ $sms->addContact('XXXXXX',$options);
 
 # send message...
 
-$sms->from('SENDER_NAME')->to('CONTACT_NUMBER')->message('MESSAGE_TO_SEND')->send();
+$sms->from('SENDER_NAME')->to(['CONTACT_NUMBER'])->message('MESSAGE_TO_SEND')->send();
 
 # Get All messages
 
